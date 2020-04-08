@@ -35,10 +35,6 @@ Summary: Work with remote images registries - retrieving information, images, si
 License: ASL 2.0
 URL: %{git0}
 Source0: %{git0}/archive/%{commit0}/%{name}-%{shortcommit0}.tar.gz
-Source1: storage.conf
-Source2: mounts.conf
-Source3: registries.conf
-Source4: seccomp.json
 
 BuildRequires: go-srpm-macros compiler(go-compiler) git pkgconfig(devmapper) make
 # If go_compiler is not set to 1, there is no virtual provide. Use golang instead.
@@ -257,12 +253,8 @@ export GOPATH=$(pwd):$(pwd)/vendor:%{gopath}
 %install
 make DESTDIR=%{buildroot} install
 mkdir -p %{buildroot}%{_sysconfdir}
-install -m0644 %{SOURCE1} %{buildroot}%{_sysconfdir}/containers/storage.conf
-install -p -m 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/containers/
 
 mkdir -p %{buildroot}%{_datadir}/containers
-install -m0644 %{SOURCE2} %{buildroot}%{_datadir}/containers/mounts.conf
-install -m0644 %{SOURCE4} %{buildroot}%{_datadir}/containers/seccomp.json
 
 # source codes for building projects
 %if 0%{?with_devel}
@@ -325,12 +317,8 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
 %dir %{_sysconfdir}/containers/registries.d
 %config(noreplace) %{_sysconfdir}/containers/policy.json
 %config(noreplace) %{_sysconfdir}/containers/registries.d/default.yaml
-%config(noreplace) %{_sysconfdir}/containers/storage.conf
-%config(noreplace) %{_sysconfdir}/containers/registries.conf
 %dir %{_sharedstatedir}/atomic/sigstore
 %dir %{_datadir}/containers
-%{_datadir}/containers/mounts.conf
-%{_datadir}/containers/seccomp.json
 
 %files
 %license LICENSE
