@@ -1,0 +1,48 @@
+---
+version_control: github
+src_repo: containers/skopeo
+tag_prefix: "^v"
+seperator: "."
+last_query:
+  time_stamp: 2020-07-01 16:28:44.086865646 +08:00
+  raw_data: 
+    {
+        "assets": [],
+        "assets_url": "https://api.github.com/repos/containers/skopeo/releases/27699428/assets",
+        "author": {
+            "avatar_url": "https://avatars3.githubusercontent.com/u/2000835?v=4",
+            "events_url": "https://api.github.com/users/rhatdan/events{/privacy}",
+            "followers_url": "https://api.github.com/users/rhatdan/followers",
+            "following_url": "https://api.github.com/users/rhatdan/following{/other_user}",
+            "gists_url": "https://api.github.com/users/rhatdan/gists{/gist_id}",
+            "gravatar_id": "",
+            "html_url": "https://github.com/rhatdan",
+            "id": 2000835,
+            "login": "rhatdan",
+            "node_id": "MDQ6VXNlcjIwMDA4MzU=",
+            "organizations_url": "https://api.github.com/users/rhatdan/orgs",
+            "received_events_url": "https://api.github.com/users/rhatdan/received_events",
+            "repos_url": "https://api.github.com/users/rhatdan/repos",
+            "site_admin": false,
+            "starred_url": "https://api.github.com/users/rhatdan/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/rhatdan/subscriptions",
+            "type": "User",
+            "url": "https://api.github.com/users/rhatdan"
+        },
+        "body": "    Add Skopeo Stable Image Dockerfile for Quay\r\n    Add tags to support regular expressions in yaml conf\r\n    Add tags to support regular expressions without breaking the old ones in yaml conf\r\n    Add upstream and testing container images\r\n    Add upstream and testing container images\r\n    Bump github.com/containers/storage from 1.20.1 to 1.20.2\r\n    Bump github.com/stretchr/testify from 1.6.0 to 1.6.1\r\n    Clarify control flow when handling the tags list\r\n    Clarify imagesToCopy control flow\r\n    Correct a typo in docs/skopeo-sync.1.md\r\n    Don't use path.Join to form repository names\r\n    Drop redundant fmt.Sprintf inside erorrs.Wrapf/Errorf\r\n    Fix error handling on invalid regex\r\n    Fix the recently added example in the man page.\r\n    Inline isTagSpecified into its only caller\r\n    Only create a SystemContext once per registry\r\n    Remove the repoReference parameter of imagesToCopyFromRepo\r\n    Share the logrus.WithFields settings over the loop bodies\r\n    Use MatchString instead of Match with a manual conversion\r\n    Use a reference.Named, not types.ImageReference, in imagesToCopyFromRepo\r\n    Use a separate field for the \"sync images with tag matching regex\" feature\r\n    Use reference.Tagged to extract the tag from a reference\r\n    Work with a reference.Named, not strings, in imagesToCopyFromRegistry\r\n    there is a brew formula for skopeo\r\n    vendor github.com/containers/common v0.14.0\r\n    vendor github.com/containers/image/v5@v5.5.1\r\n~                                                 ",
+        "created_at": "2020-06-17T20:41:19Z",
+        "draft": false,
+        "html_url": "https://github.com/containers/skopeo/releases/tag/v1.1.0",
+        "id": 27699428,
+        "name": "v1.1.0",
+        "node_id": "MDc6UmVsZWFzZTI3Njk5NDI4",
+        "prerelease": false,
+        "published_at": "2020-06-18T19:29:30Z",
+        "tag_name": "v1.1.0",
+        "tarball_url": "https://api.github.com/repos/containers/skopeo/tarball/v1.1.0",
+        "target_commitish": "master",
+        "upload_url": "https://uploads.github.com/repos/containers/skopeo/releases/27699428/assets{?name,label}",
+        "url": "https://api.github.com/repos/containers/skopeo/releases/27699428",
+        "zipball_url": "https://api.github.com/repos/containers/skopeo/zipball/v1.1.0"
+    }
+query_type: api.github.releases
