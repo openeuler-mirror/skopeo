@@ -14,13 +14,13 @@
 
 %global provider github
 %global provider_tld com
-%global project projectatomic
+%global project containers
 %global repo skopeo
 # https://github.com/containers/skopeo
 %global provider_prefix %{provider}.%{provider_tld}/%{project}/%{repo}
 %global import_path %{provider_prefix}
 %global git0 https://%{import_path}
-%global commit0 e814f9605abe05a99b692225d458968a796d2843
+%global commit0 63085f5bef1131aa9ec0907a5c8d66b67de7c4b2
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 
 %define epoch 1
@@ -29,7 +29,7 @@ ExcludeArch: ppc64
 
 Name: %{repo}
 Epoch: 1
-Version: 0.1.32
+Version: 1.1.0
 Release: 2.dev.git%{shortcommit0}
 Summary: Work with remote images registries - retrieving information, images, signing content
 License: ASL 2.0
@@ -229,7 +229,7 @@ policy under `/etc/containers/`.
 %autosetup -Sgit -n %{name}-%{commit0}
 
 %build
-mkdir -p src/github.com/projectatomic
+mkdir -p src/github.com/containers
 ln -s ../../../ src/%{import_path}
 
 mkdir -p vendor/src
@@ -247,6 +247,8 @@ export GOPATH=$(pwd):%{gopath}
 export GOPATH=$(pwd):$(pwd)/vendor:%{gopath}
 %endif
 
+export GO111MODULE=off
+export GOPROXY=off
 %gobuild -o %{name} ./cmd/%{name}
 %{__make} docs
 
@@ -317,14 +319,14 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
 %dir %{_sysconfdir}/containers/registries.d
 %config(noreplace) %{_sysconfdir}/containers/policy.json
 %config(noreplace) %{_sysconfdir}/containers/registries.d/default.yaml
-%dir %{_sharedstatedir}/atomic/sigstore
+%dir %{_sharedstatedir}/containers/sigstore
 %dir %{_datadir}/containers
 
 %files
 %license LICENSE
 %doc README.md
 %{_bindir}/%{name}
-%{_mandir}/man1/%{name}.1*
+%{_mandir}/man1/%{name}*
 %dir %{_datadir}/bash-completion
 %dir %{_datadir}/bash-completion/completions
 %{_datadir}/bash-completion/completions/%{name}
