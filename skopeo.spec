@@ -30,11 +30,11 @@ ExcludeArch: ppc64
 Name: %{repo}
 Epoch: 1
 Version: 1.1.0
-Release: 2.dev.git%{shortcommit0}
+Release: 3.dev.git%{shortcommit0}
 Summary: Work with remote images registries - retrieving information, images, signing content
 License: ASL 2.0
-URL: %{git0}
-Source0: %{git0}/archive/%{commit0}/%{name}-%{shortcommit0}.tar.gz
+URL: https://github.com/containers/skopeo
+Source0: https://github.com/containers/skopeo/archive/v1.1.0.tar.gz
 
 BuildRequires: go-srpm-macros compiler(go-compiler) git pkgconfig(devmapper) make
 # If go_compiler is not set to 1, there is no virtual provide. Use golang instead.
