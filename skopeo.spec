@@ -30,16 +30,14 @@ ExcludeArch: ppc64
 Name: %{repo}
 Epoch: 1
 Version: 1.1.0
-Release: 3.dev.git%{shortcommit0}
+Release: 5.dev.git%{shortcommit0}
 Summary: Work with remote images registries - retrieving information, images, signing content
 License: ASL 2.0
 URL: https://github.com/containers/skopeo
 Source0: https://github.com/containers/skopeo/archive/v1.1.0.tar.gz
+Source1: https://github.com/cpuguy83/go-md2man/archive/v1.0.10.tar.gz
 
-BuildRequires: go-srpm-macros compiler(go-compiler) git pkgconfig(devmapper) make
-# If go_compiler is not set to 1, there is no virtual provide. Use golang instead.
-BuildRequires: %{?go_compiler:compiler(go-compiler)}%{!?go_compiler:golang}
-BuildRequires: golang-github-cpuguy83-go-md2man
+BuildRequires: go-srpm-macros golang git pkgconfig(devmapper) make
 BuildRequires: gpgme-devel libassuan-devel btrfs-progs-devel ostree-devel glib2-devel
 Requires: containers-common = %{epoch}:%{version}-%{release}
 
@@ -227,8 +225,13 @@ policy under `/etc/containers/`.
 
 %prep
 %autosetup -Sgit -n %{name}-%{commit0}
+tar -xf %SOURCE1
 
 %build
+cd go-md2man-*
+go build -mod=vendor -o go-md2man .
+export GOMD2MAN=$(realpath go-md2man)
+cd -
 mkdir -p src/github.com/containers
 ln -s ../../../ src/%{import_path}
 
@@ -332,3 +335,7 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
 %{_datadir}/bash-completion/completions/%{name}
 
 %changelog
+* Fri Feb  19 2021 haozi007 <liuhao27@huawei.com> - 1.1.0-5.dev.git63085f5
+- Change BuildRequires to source go-md2man
+* Mon Feb  8 2021 haozi007 <liuhao27@huawei.com> - 1.1.0-4.dev.git63085f5
+- Change BuildRequires to golang
