@@ -3,7 +3,7 @@
 %global with_unit_test 0
 %global with_check 0
 
-%global with_debug 0
+%global with_debug 1
 
 %if 0%{?with_debug}
 %global _find_debuginfo_dwz_opts %{nil}
@@ -30,7 +30,7 @@ ExcludeArch: ppc64
 Name: %{repo}
 Epoch: 1
 Version: 1.1.0
-Release: 4.dev.git%{shortcommit0}
+Release: 6.dev.git%{shortcommit0}
 Summary: Work with remote images registries - retrieving information, images, signing content
 License: ASL 2.0
 URL: https://github.com/containers/skopeo
@@ -335,5 +335,9 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
 %{_datadir}/bash-completion/completions/%{name}
 
 %changelog
+* Thu Mar  18 2021 haozi007 <liuhao27@huawei.com> - 1.1.0-6.dev.git63085f5
+- enable debug rpm
+* Fri Feb  19 2021 haozi007 <liuhao27@huawei.com> - 1.1.0-5.dev.git63085f5
+- Change BuildRequires to source go-md2man
 * Mon Feb  8 2021 haozi007 <liuhao27@huawei.com> - 1.1.0-4.dev.git63085f5
 - Change BuildRequires to golang
