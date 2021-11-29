@@ -30,12 +30,13 @@ ExcludeArch: ppc64
 Name: %{repo}
 Epoch: 1
 Version: 1.1.0
-Release: 6.dev.git%{shortcommit0}
+Release: 7.dev.git%{shortcommit0}
 Summary: Work with remote images registries - retrieving information, images, signing content
 License: ASL 2.0
 URL: https://github.com/containers/skopeo
 Source0: https://github.com/containers/skopeo/archive/v1.1.0.tar.gz
 Source1: https://github.com/cpuguy83/go-md2man/archive/v1.0.10.tar.gz
+Source2: registries.conf
 
 BuildRequires: go-srpm-macros golang git pkgconfig(devmapper) make
 BuildRequires: gpgme-devel libassuan-devel btrfs-progs-devel ostree-devel glib2-devel
@@ -260,6 +261,7 @@ make DESTDIR=%{buildroot} install
 mkdir -p %{buildroot}%{_sysconfdir}
 
 mkdir -p %{buildroot}%{_datadir}/containers
+install -m0644 %{SOURCE2} %{buildroot}%{_sysconfdir}/containers/registries.conf
 
 # source codes for building projects
 %if 0%{?with_devel}
@@ -319,6 +321,7 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
 
 %files -n containers-common
 %dir %{_sysconfdir}/containers
+%config(noreplace) %{_sysconfdir}/containers/registries.conf
 %dir %{_sysconfdir}/containers/registries.d
 %config(noreplace) %{_sysconfdir}/containers/policy.json
 %config(noreplace) %{_sysconfdir}/containers/registries.d/default.yaml
@@ -335,9 +338,26 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
 %{_datadir}/bash-completion/completions/%{name}
 
 %changelog
+* Thu Nov 25 2021 haozi007<liuhao27@huawei.com> - 1.1.0-7.dev.git63085f5
+- Type:bugfix
+- ID:NA
+- SUG:NA
+- DESC:install registries.conf for skopeo
+
 * Thu Mar  18 2021 haozi007 <liuhao27@huawei.com> - 1.1.0-6.dev.git63085f5
-- enable debug rpm
+- Type:bugfix
+- ID:NA
+- SUG:NA
+- DESC:enable debug rpm
+
 * Fri Feb  19 2021 haozi007 <liuhao27@huawei.com> - 1.1.0-5.dev.git63085f5
-- Change BuildRequires to source go-md2man
+- Type:bugfix
+- ID:NA
+- SUG:NA
+- DESC:Change BuildRequires to source go-md2man
+
 * Mon Feb  8 2021 haozi007 <liuhao27@huawei.com> - 1.1.0-4.dev.git63085f5
-- Change BuildRequires to golang
+- Type:bugfix
+- ID:NA
+- SUG:NA
+- DESC:Change BuildRequires to golang
