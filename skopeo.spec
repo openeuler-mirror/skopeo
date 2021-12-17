@@ -30,13 +30,14 @@ ExcludeArch: ppc64
 Name: %{repo}
 Epoch: 1
 Version: 1.1.0
-Release: 7.dev.git%{shortcommit0}
+Release: 8.dev.git%{shortcommit0}
 Summary: Work with remote images registries - retrieving information, images, signing content
 License: ASL 2.0
 URL: https://github.com/containers/skopeo
 Source0: https://github.com/containers/skopeo/archive/v1.1.0.tar.gz
 Source1: https://github.com/cpuguy83/go-md2man/archive/v1.0.10.tar.gz
 Source2: registries.conf
+Source3: seccomp.json
 
 BuildRequires: go-srpm-macros golang git pkgconfig(devmapper) make
 BuildRequires: gpgme-devel libassuan-devel btrfs-progs-devel ostree-devel glib2-devel
@@ -262,6 +263,7 @@ mkdir -p %{buildroot}%{_sysconfdir}
 
 mkdir -p %{buildroot}%{_datadir}/containers
 install -m0644 %{SOURCE2} %{buildroot}%{_sysconfdir}/containers/registries.conf
+install -m0644 %{SOURCE3} %{buildroot}%{_datadir}/containers/seccomp.json
 
 # source codes for building projects
 %if 0%{?with_devel}
@@ -327,6 +329,7 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
 %config(noreplace) %{_sysconfdir}/containers/registries.d/default.yaml
 %dir %{_sharedstatedir}/containers/sigstore
 %dir %{_datadir}/containers
+%{_datadir}/containers/seccomp.json
 
 %files
 %license LICENSE
@@ -338,6 +341,12 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
 %{_datadir}/bash-completion/completions/%{name}
 
 %changelog
+* Fri Dec 10 2021 wangqing <wangqing@uniontech.com> - 1.1.0-8.dev.git63085f5
+- Type:bugfix
+- ID:NA
+- SUG:NA
+- DESC:install seccomp.json for skopeo
+
 * Thu Nov 25 2021 haozi007<liuhao27@huawei.com> - 1.1.0-7.dev.git63085f5
 - Type:bugfix
 - ID:NA
