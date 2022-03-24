@@ -20,8 +20,8 @@
 %global provider_prefix %{provider}.%{provider_tld}/%{project}/%{repo}
 %global import_path %{provider_prefix}
 %global git0 https://%{import_path}
-%global commit0 63085f5bef1131aa9ec0907a5c8d66b67de7c4b2
-%global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
+
+%global build_version v1.5.2
 
 %define epoch 1
 
@@ -29,19 +29,18 @@ ExcludeArch: ppc64
 
 Name: %{repo}
 Epoch: 1
-Version: 1.1.0
-Release: 8.dev.git%{shortcommit0}
+Version: 1.5.2
+Release: 1
 Summary: Work with remote images registries - retrieving information, images, signing content
 License: ASL 2.0
-URL: https://github.com/containers/skopeo
-Source0: https://github.com/containers/skopeo/archive/v1.1.0.tar.gz
+URL: %{git0}
+Source0: %{git0}/archive/%{build_version}.tar.gz
 Source1: https://github.com/cpuguy83/go-md2man/archive/v1.0.10.tar.gz
-Source2: registries.conf
-Source3: seccomp.json
 
-BuildRequires: go-srpm-macros golang git pkgconfig(devmapper) make
+BuildRequires: go-srpm-macros git-core pkgconfig(devmapper) make
+BuildRequires: golang >= 1.16.6
 BuildRequires: gpgme-devel libassuan-devel btrfs-progs-devel ostree-devel glib2-devel
-Requires: containers-common = %{epoch}:%{version}-%{release}
+Requires: containers-common
 
 Provides: bundled(golang(github.com/beorn7/perks)) = 4c0e84591b9aa9e6dcfdf3e020114cd81f89d5f9
 Provides: bundled(golang(github.com/BurntSushi/toml)) = master
@@ -213,27 +212,15 @@ This package contains unit tests for project
 providing packages with %{import_path} prefix.
 %endif
 
-%package -n containers-common
-Summary: Configuration files for working with image signatures
-Obsoletes: atomic <= 1.13.1-2
-Conflicts: atomic-registries <= 1.22.1-1
-Obsoletes: docker-rhsubscription <= 2:1.13.1-31
-Provides: %{name}-containers = %{version}-%{release}
-Obsoletes: %{name}-containers <= 0.1.31-2
-
-%description -n containers-common
-This package installs a default signature store configuration and a default
-policy under `/etc/containers/`.
-
 %prep
-%autosetup -Sgit -n %{name}-%{commit0}
+%autosetup -Sgit -n %{name}-%{version}
 tar -xf %SOURCE1
 
 %build
-cd go-md2man-*
+pushd go-md2man-*
 go build -mod=vendor -o go-md2man .
 export GOMD2MAN=$(realpath go-md2man)
-cd -
+popd
 mkdir -p src/github.com/containers
 ln -s ../../../ src/%{import_path}
 
@@ -247,23 +234,24 @@ done
 
 %if ! 0%{?with_bundled}
 rm -rf vendor/
-export GOPATH=$(pwd):%{gopath}
+export GOPATH=$(pwd)
 %else
-export GOPATH=$(pwd):$(pwd)/vendor:%{gopath}
+export GOPATH=$(pwd):$(pwd)/vendor
 %endif
 
+mkdir -p bin
 export GO111MODULE=off
-export GOPROXY=off
-go build -buildmode pie -compiler gc -tags="rpm_crashtraceback ${BUILDTAGS:-}" -ldflags "${LDFLAGS:-} -B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d '  \n') -extldflags '%__global_ldflags %{?__golang_extldflags}'" -a -v -x -o %{name} ./cmd/%{name}
+
+go build -buildmode pie -compiler gc -tags="rpm_crashtraceback ${BUILDTAGS:-}" -ldflags "${LDFLAGS:-} -B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d '  \n') -extldflags '-Wl,-z,relro -Wl,-z,now '" -a -v -x -o bin/%{name} ./cmd/%{name}
 %{__make} docs
-
+ 
 %install
-make DESTDIR=%{buildroot} install
-mkdir -p %{buildroot}%{_sysconfdir}
+make \
+    PREFIX=%{buildroot}%{_prefix} \
+    install-docs install-completions
 
-mkdir -p %{buildroot}%{_datadir}/containers
-install -m0644 %{SOURCE2} %{buildroot}%{_sysconfdir}/containers/registries.conf
-install -m0644 %{SOURCE3} %{buildroot}%{_datadir}/containers/seccomp.json
+install -m0755 -d -p %{buildroot}%{_bindir}
+install -m0755 bin/skopeo %{buildroot}%{_bindir}/%{name}
 
 # source codes for building projects
 %if 0%{?with_devel}
@@ -321,26 +309,19 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
 %doc README.md
 %endif
 
-%files -n containers-common
-%dir %{_sysconfdir}/containers
-%config(noreplace) %{_sysconfdir}/containers/registries.conf
-%dir %{_sysconfdir}/containers/registries.d
-%config(noreplace) %{_sysconfdir}/containers/policy.json
-%config(noreplace) %{_sysconfdir}/containers/registries.d/default.yaml
-%dir %{_sharedstatedir}/containers/sigstore
-%dir %{_datadir}/containers
-%{_datadir}/containers/seccomp.json
-
 %files
 %license LICENSE
 %doc README.md
 %{_bindir}/%{name}
-%{_mandir}/man1/%{name}*
-%dir %{_datadir}/bash-completion
-%dir %{_datadir}/bash-completion/completions
-%{_datadir}/bash-completion/completions/%{name}
+%{_prefix}/share/man/man1/%{name}*
+%dir %{_prefix}/share/bash-completion
+%dir %{_prefix}/share/bash-completion/completions
+%{_prefix}/share/bash-completion/completions/%{name}
 
 %changelog
+* Thu Mar 24 2022 fushanqing <fushanqing@kylinos.cn> - 1:1.5.2-1
+- update to 1.5.2 and remove subpackage containers-common
+
 * Fri Dec 10 2021 wangqing <wangqing@uniontech.com> - 1.1.0-8.dev.git63085f5
 - Type:bugfix
 - ID:NA
