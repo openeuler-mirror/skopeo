@@ -21,7 +21,7 @@
 %global import_path %{provider_prefix}
 %global git0 https://%{import_path}
 
-%global build_version v1.5.2
+%global build_version v1.8.0
 
 %define epoch 1
 
@@ -29,7 +29,7 @@ ExcludeArch: ppc64
 
 Name: %{repo}
 Epoch: 1
-Version: 1.5.2
+Version: 1.8.0
 Release: 1
 Summary: Work with remote images registries - retrieving information, images, signing content
 License: ASL 2.0
@@ -319,6 +319,9 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
 %{_prefix}/share/bash-completion/completions/%{name}
 
 %changelog
+* Mon Nov 07 2022 fushanqing <fushanqing@kylinos.cn> - 1:1.8.0-1
+- update to 1.8.0.
+
 * Thu Mar 24 2022 fushanqing <fushanqing@kylinos.cn> - 1:1.5.2-1
 - update to 1.5.2 and remove subpackage containers-common
 
