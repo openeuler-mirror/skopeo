@@ -21,7 +21,7 @@
 %global import_path %{provider_prefix}
 %global git0 https://%{import_path}
 
-%global build_version v1.8.0
+%global build_version v1.5.2
 
 %define epoch 1
 
@@ -29,19 +29,19 @@ ExcludeArch: ppc64
 
 Name: %{repo}
 Epoch: 1
-Version: 1.8.0
+Version: 1.5.2
 Release: 1
 Summary: Work with remote images registries - retrieving information, images, signing content
 License: ASL 2.0
 URL: %{git0}
 Source0: %{git0}/archive/%{build_version}.tar.gz
 Source1: https://github.com/cpuguy83/go-md2man/archive/v1.0.10.tar.gz
+Source2: registries.conf
 
 BuildRequires: go-srpm-macros git-core pkgconfig(devmapper) make
 BuildRequires: golang >= 1.16.6
 BuildRequires: gpgme-devel libassuan-devel btrfs-progs-devel ostree-devel glib2-devel
-Requires: containers-common
-
+Requires: containers-common = %{epoch}:%{version}-%{release}
 Provides: bundled(golang(github.com/beorn7/perks)) = 4c0e84591b9aa9e6dcfdf3e020114cd81f89d5f9
 Provides: bundled(golang(github.com/BurntSushi/toml)) = master
 Provides: bundled(golang(github.com/containerd/continuity)) = d8fb8589b0e8e85b8c8bbaa8840226d0dfeb7371
@@ -212,6 +212,18 @@ This package contains unit tests for project
 providing packages with %{import_path} prefix.
 %endif
 
+%package -n containers-common
+Summary: Configuration files for working with image signatures
+Obsoletes: atomic <= 1.13.1-2
+Conflicts: atomic-registries <= 1.22.1-1
+Obsoletes: docker-rhsubscription <= 2:1.13.1-31
+Provides: %{name}-containers = %{version}-%{release}
+Obsoletes: %{name}-containers <= %{version}-%{release}
+
+%description -n containers-common
+This package installs a default signature store configuration and a default
+policy under `/etc/containers/`.
+
 %prep
 %autosetup -Sgit -n %{name}-%{version}
 tar -xf %SOURCE1
@@ -252,6 +264,14 @@ make \
 
 install -m0755 -d -p %{buildroot}%{_bindir}
 install -m0755 bin/skopeo %{buildroot}%{_bindir}/%{name}
+
+install -m0755 -d -p %{buildroot}%{_sysconfdir}/containers
+install -m0644 %{SOURCE2} %{buildroot}%{_sysconfdir}/containers/registries.conf
+install -m0755 -d -p %{buildroot}/var/lib/containers/sigstore
+install -m0755 -d -p %{buildroot}%{_sysconfdir}/containers/registries.d
+install -m0644 default.yaml %{buildroot}%{_sysconfdir}/containers/registries.d/default.yaml
+install -m0644 default-policy.json %{buildroot}%{_sysconfdir}/containers/policy.json
+
 
 # source codes for building projects
 %if 0%{?with_devel}
@@ -309,6 +329,14 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
 %doc README.md
 %endif
 
+%files -n containers-common
+%dir /etc/containers
+%config(noreplace) /etc/containers/registries.conf
+%dir /etc/containers/registries.d
+%config(noreplace) /etc/containers/registries.d/default.yaml
+%config(noreplace) /etc/containers/policy.json
+%dir /var/lib/containers/sigstore
+
 %files
 %license LICENSE
 %doc README.md
@@ -319,8 +347,11 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
 %{_prefix}/share/bash-completion/completions/%{name}
 
 %changelog
+* Thu Dec 22 2022 fushanqing <fushanqing@kylinos.cn> - 1:1.5.2-1
+- rollback to 1.5.2
+
 * Mon Nov 07 2022 fushanqing <fushanqing@kylinos.cn> - 1:1.8.0-1
-- update to 1.8.0.
+- update to 1.8.0
 
 * Mon Nov 29 2021 haozi007<liuhao27@huawei.com> - 1.1.0-7.dev.git63085f5
 - Type:bugfix
