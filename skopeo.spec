@@ -30,7 +30,7 @@ ExcludeArch: ppc64
 Name: %{repo}
 Epoch: 1
 Version: 1.8.0
-Release: 1
+Release: 2
 Summary: Work with remote images registries - retrieving information, images, signing content
 License: ASL 2.0
 URL: %{git0}
@@ -242,6 +242,10 @@ export GOPATH=$(pwd):$(pwd)/vendor
 mkdir -p bin
 export GO111MODULE=off
 
+%if "%toolchain" == "clang"
+	export LDFLAGS=''
+%endif
+
 go build -buildmode pie -compiler gc -tags="rpm_crashtraceback ${BUILDTAGS:-}" -ldflags "${LDFLAGS:-} -B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d '  \n') -extldflags '-Wl,-z,relro -Wl,-z,now '" -a -v -x -o bin/%{name} ./cmd/%{name}
 %{__make} docs
  
@@ -319,6 +323,9 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
 %{_prefix}/share/bash-completion/completions/%{name}
 
 %changelog
+* Thu May 25 2023 yoo <sunyuechi@iscas.ac.cn> - 1.8.0-2
+- fix clang build error
+
 * Mon Nov 07 2022 fushanqing <fushanqing@kylinos.cn> - 1:1.8.0-1
 - update to 1.8.0.
 
